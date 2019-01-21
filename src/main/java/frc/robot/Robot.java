@@ -8,9 +8,14 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.ElevateBallCommand;
+import frc.robot.commands.ElevateHatchCommand;
 import frc.robot.subsystems.DriveTrainSys;
+import frc.robot.subsystems.ElevatorSys;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,6 +27,9 @@ import frc.robot.subsystems.DriveTrainSys;
 public class Robot extends TimedRobot {
   private DriveTrainSys m_drive;
   private OI m_oi;
+  private SendableChooser<Command> chooser;
+  private Command elevatorCommand;
+  private ElevatorSys m_elevator;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -31,7 +39,17 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_oi = new OI();
     m_drive = new DriveTrainSys();
+    m_elevator = new ElevatorSys();
     m_drive.setDefaultCommand(new DriveCommand(m_drive, m_oi));
+    chooser = new SendableChooser<>();
+
+    chooser.setDefaultOption("Default Height", new ElevateHatchCommand(m_elevator, 0));
+    chooser.addOption("Middle Rocket Hatch", new ElevateHatchCommand(m_elevator, 1));
+    chooser.addOption("High Rocket Hatch", new ElevateHatchCommand(m_elevator, 2));
+    
+    chooser.addOption("Low Rocket Ball Hole", new ElevateBallCommand(m_elevator, 0));
+    chooser.addOption("Middle Rocket Ball Hole", new ElevateBallCommand(m_elevator, 1));
+    chooser.addOption("High Rocket Ball Hole", new ElevateBallCommand(m_elevator, 2));
   }
 
   /**
@@ -53,6 +71,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
+    elevatorCommand.cancel();
   }
 
   @Override
@@ -92,6 +111,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    elevatorCommand = chooser.getSelected();
+    elevatorCommand.start();
     Scheduler.getInstance().run();
   }
 
