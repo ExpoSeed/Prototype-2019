@@ -85,4 +85,8 @@ public class ElevatorSys extends InjectedSubsystem {
   public boolean isComplete() {
     return done;
   }
+
+  public void stop() {
+    elevator.stopMotor();
+  }
 }
