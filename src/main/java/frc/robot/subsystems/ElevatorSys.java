@@ -92,4 +92,8 @@ public class ElevatorSys extends InjectedSubsystem {
   public void stop() {
     elevator.stopMotor();
   }
+
+  public void stop() {
+    elevator.stopMotor();
+  }
 }
