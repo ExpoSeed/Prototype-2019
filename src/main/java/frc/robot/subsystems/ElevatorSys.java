@@ -88,12 +88,4 @@ public class ElevatorSys extends InjectedSubsystem {
     else
       return enc.getRaw() == ballHeights[num];
   }
-
-  public void stop() {
-    elevator.stopMotor();
-  }
-
-  public void stop() {
-    elevator.stopMotor();
-  }
 }
