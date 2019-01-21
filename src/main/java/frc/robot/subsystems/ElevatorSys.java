@@ -23,8 +23,6 @@ public class ElevatorSys extends InjectedSubsystem {
   private static int motorLeftPort = 5;
   private static int motorRightPort = 6;
 
-  private boolean done = true;
-
   private static WPI_TalonSRX motorLeft;
   private static WPI_TalonSRX motorRight;
 
@@ -39,6 +37,9 @@ public class ElevatorSys extends InjectedSubsystem {
 
   private static DifferentialDrive elevator; 
 
+  private int num = 0;
+  private boolean hatch = true;
+
   public ElevatorSys() {
     motorLeft = new WPI_TalonSRX(motorLeftPort);
     motorRight = new WPI_TalonSRX(motorRightPort);
@@ -49,7 +50,7 @@ public class ElevatorSys extends InjectedSubsystem {
   }
 
   public void moveToHatch(int num) {
-    done = false;
+    hatch = true;
     if(enc.getRaw() > hatchHeights[num])
     {
       while (enc.getRaw() < hatchHeights[num])
@@ -62,11 +63,11 @@ public class ElevatorSys extends InjectedSubsystem {
         elevator.arcadeDrive(-0.2, 0); 
       elevator.stopMotor();  
     }
-    done = true;
   }
 
   public void moveToBall(int num) {
-    done = false;
+    hatch = false;
+    this.num = num;
     if(enc.getRaw() > ballHeights[num])
     {
       while (enc.getRaw() < ballHeights[num])
@@ -79,10 +80,16 @@ public class ElevatorSys extends InjectedSubsystem {
         elevator.arcadeDrive(-0.2, 0); 
       elevator.stopMotor();  
     }
-    done = true;
   }
 
   public boolean isComplete() {
-    return done;
+    if (hatch)
+      return enc.getRaw() == hatchHeights[num];
+    else
+      return enc.getRaw() == ballHeights[num];
+  }
+
+  public void stop() {
+    elevator.stopMotor();
   }
 }
