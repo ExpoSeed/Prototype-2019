@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 //pitch diam 1.432 inches
@@ -27,18 +28,18 @@ public class ElevatorSys extends InjectedSubsystem {
   private static WPI_TalonSRX motorRight;
 
   //placeholder values
-  private static int[] hatchHeights = {0, 1, 2}; 
-  private static int[] ballHeights = {0, 1, 2}; 
+  public static int[] heights = {0, 1, 2, //hatch heights
+    0, 1, 2}; //ball heights
 
   private static Encoder enc;
 
   private static int encChannel0 = 0;
   private static int encChannel1 = 1;
 
-  private static SpeedControllerGroup elevator; 
+  private double P = 0, I = 0, D = 0;
+  private PIDController pid;
 
-  private int num = 0;
-  private boolean hatch = true;
+  private static SpeedControllerGroup elevator; 
 
   public ElevatorSys() {
     motorLeft = new WPI_TalonSRX(motorLeftPort);
@@ -47,45 +48,16 @@ public class ElevatorSys extends InjectedSubsystem {
     elevator = new SpeedControllerGroup(motorLeft, motorRight);
 
     enc = new Encoder(encChannel0,encChannel1, false, Encoder.EncodingType.k4X);
+
+    pid = new PIDController(P, I, D, enc, elevator);
   }
 
-  public void moveToHatch(int num) {
-    hatch = true;
-    if(enc.getRaw() > hatchHeights[num])
-    {
-      while (enc.getRaw() < hatchHeights[num])
-        elevator.set(0.2); 
-      elevator.stopMotor();  
-    }
-    if(enc.getRaw() < hatchHeights[num])
-    {
-      while (enc.getRaw() < hatchHeights[num])
-        elevator.set(-0.2); 
-      elevator.stopMotor();  
-    }
+  public void move(int num) {
+    pid.setSetpoint(heights[num]);
+    pid.enable();
   }
 
-  public void moveToBall(int num) {
-    hatch = false;
-    this.num = num;
-    if(enc.getRaw() > ballHeights[num])
-    {
-      while (enc.getRaw() < ballHeights[num])
-        elevator.set(0.2); 
-      elevator.stopMotor();  
-    }
-    if(enc.getRaw() < ballHeights[num])
-    {
-      while (enc.getRaw() < ballHeights[num])
-        elevator.set(-0.2); 
-      elevator.stopMotor();  
-    }
-  }
-
-  public boolean isComplete() {
-    if (hatch)
-      return enc.getRaw() == hatchHeights[num];
-    else
-      return enc.getRaw() == ballHeights[num];
+  public void resetPid() {
+    pid.reset();
   }
 }

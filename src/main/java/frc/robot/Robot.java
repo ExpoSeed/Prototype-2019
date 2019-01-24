@@ -12,8 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.ElevateBallCommand;
-import frc.robot.commands.ElevateHatchCommand;
+import frc.robot.commands.ElevateCommand;
 import frc.robot.subsystems.DriveTrainSys;
 import frc.robot.subsystems.ElevatorSys;
 
@@ -43,13 +42,13 @@ public class Robot extends TimedRobot {
     m_drive.setDefaultCommand(new DriveCommand(m_drive, m_oi));
     chooser = new SendableChooser<>();
 
-    chooser.setDefaultOption("Default Height", new ElevateHatchCommand(m_elevator, 0));
-    chooser.addOption("Middle Rocket Hatch", new ElevateHatchCommand(m_elevator, 1));
-    chooser.addOption("High Rocket Hatch", new ElevateHatchCommand(m_elevator, 2));
+    chooser.setDefaultOption("Default Height", new ElevateCommand(m_elevator, 0));
+    chooser.addOption("Middle Rocket Hatch", new ElevateCommand(m_elevator, 1));
+    chooser.addOption("High Rocket Hatch", new ElevateCommand(m_elevator, 2));
     
-    chooser.addOption("Low Rocket Ball Hole", new ElevateBallCommand(m_elevator, 0));
-    chooser.addOption("Middle Rocket Ball Hole", new ElevateBallCommand(m_elevator, 1));
-    chooser.addOption("High Rocket Ball Hole", new ElevateBallCommand(m_elevator, 2));
+    chooser.addOption("Low Rocket Ball Hole", new ElevateCommand(m_elevator, 3));
+    chooser.addOption("Middle Rocket Ball Hole", new ElevateCommand(m_elevator, 4));
+    chooser.addOption("High Rocket Ball Hole", new ElevateCommand(m_elevator, 5));
   }
 
   /**
@@ -72,6 +71,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     elevatorCommand.cancel();
+    m_elevator.resetPid();
   }
 
   @Override

@@ -10,11 +10,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.ElevatorSys;
 
-public class ElevateBallCommand extends Command {
+public class ElevateCommand extends Command {
   private ElevatorSys m_elevator;
   private int num;
 
-  public ElevateBallCommand(ElevatorSys es, int num) {
+  public ElevateCommand(ElevatorSys es, int num) {
     this.m_elevator = es;
     this.num = num;
     requires(m_elevator);
@@ -28,24 +28,25 @@ public class ElevateBallCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    m_elevator.moveToBall(num);
+    m_elevator.move(num);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return m_elevator.isComplete();
+    return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    m_elevator.resetPid();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    cancel();
+    end();
   }
 }
