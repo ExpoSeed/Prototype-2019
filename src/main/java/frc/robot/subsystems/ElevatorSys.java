@@ -10,7 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 //pitch diam 1.432 inches
 //use that diameter to find the arc length
@@ -35,7 +35,7 @@ public class ElevatorSys extends InjectedSubsystem {
   private static int encChannel0 = 0;
   private static int encChannel1 = 1;
 
-  private static DifferentialDrive elevator; 
+  private static SpeedControllerGroup elevator; 
 
   private int num = 0;
   private boolean hatch = true;
@@ -44,7 +44,7 @@ public class ElevatorSys extends InjectedSubsystem {
     motorLeft = new WPI_TalonSRX(motorLeftPort);
     motorRight = new WPI_TalonSRX(motorRightPort);
 
-    elevator = new DifferentialDrive(motorLeft, motorRight);
+    elevator = new SpeedControllerGroup(motorLeft, motorRight);
 
     enc = new Encoder(encChannel0,encChannel1, false, Encoder.EncodingType.k4X);
   }
@@ -54,13 +54,13 @@ public class ElevatorSys extends InjectedSubsystem {
     if(enc.getRaw() > hatchHeights[num])
     {
       while (enc.getRaw() < hatchHeights[num])
-        elevator.arcadeDrive(0.2, 0); 
+        elevator.set(0.2); 
       elevator.stopMotor();  
     }
     if(enc.getRaw() < hatchHeights[num])
     {
       while (enc.getRaw() < hatchHeights[num])
-        elevator.arcadeDrive(-0.2, 0); 
+        elevator.set(-0.2); 
       elevator.stopMotor();  
     }
   }
@@ -71,13 +71,13 @@ public class ElevatorSys extends InjectedSubsystem {
     if(enc.getRaw() > ballHeights[num])
     {
       while (enc.getRaw() < ballHeights[num])
-        elevator.arcadeDrive(0.2, 0); 
+        elevator.set(0.2); 
       elevator.stopMotor();  
     }
     if(enc.getRaw() < ballHeights[num])
     {
       while (enc.getRaw() < ballHeights[num])
-        elevator.arcadeDrive(-0.2, 0); 
+        elevator.set(-0.2); 
       elevator.stopMotor();  
     }
   }
